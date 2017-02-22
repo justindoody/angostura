@@ -26,6 +26,10 @@ describe TestModule do
       end
     end
 
+    it 'returns list of dependencies' do
+      expect(TestModule.dependencies).to eq [:test]
+    end
+
     it 'sets up depedencies' do
       expect(TestModule.test).to eq 'Bachmanity'
     end

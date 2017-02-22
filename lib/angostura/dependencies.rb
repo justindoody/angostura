@@ -1,9 +1,17 @@
 module Angostura
   module Dependencies
-    extend ActiveSupport::Concern
+    def self.included(base)
+      base.extend ClassMethods
+    end
 
-    class_methods do
-      mattr_accessor :dependencies
+    module ClassMethods
+      def dependencies
+        @@dependencies
+      end
+
+      def dependencies=(value)
+        @@dependencies = value
+      end
 
       def setup
         yield self
@@ -15,16 +23,25 @@ module Angostura
 
       def dependency(*args, **kargs)
         self.dependencies = args + kargs&.keys
-        self.mattr_accessor(*dependencies)
+
+        dependencies.each do |dependency|
+          class_eval("@@#{dependency} = nil")
+
+          self.define_singleton_method "#{dependency}" do
+            class_eval("@@#{dependency}")
+          end
+
+          self.define_singleton_method "#{dependency}=" do |value|
+            class_eval("@@#{dependency} = '#{value}'")
+          end
+
+          self.define_singleton_method "#{dependency}_class" do
+            Object.const_get(self.send(dependency))
+          end
+        end
 
         kargs.each do |key, default_value|
           self.send("#{key}=", default_value)
-        end
-
-        dependencies.each do |dependency|
-          define_singleton_method "#{dependency}_class" do
-            Object.const_get(self.send(dependency))
-          end
         end
       end
     end

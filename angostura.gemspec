@@ -14,8 +14,6 @@ Gem::Specification.new do |s|
   s.homepage = 'https://github.com/justindoody/angostura'
   s.license = 'MIT'
 
-  s.add_dependency 'activesupport', '~> 4.0'
-
   s.add_development_dependency 'bundler', '~> 1.14'
   s.add_development_dependency 'rspec', '~> 3.5'
   s.add_development_dependency 'pry'
