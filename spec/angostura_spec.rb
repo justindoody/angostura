@@ -4,6 +4,12 @@ module TestModule
   dependency :test
 end
 
+module TestModuleMultiple
+  include Angostura::Dependencies
+
+  dependency :hooli, :pied_piper
+end
+
 module TestModuleDefaults
   include Angostura::Dependencies
 
@@ -19,15 +25,19 @@ describe TestModule do
     end
   end
 
+  it 'returns list of dependencies' do
+    expect(TestModule.dependencies).to eq [:test]
+  end
+
+  it 'returns list of dependencies' do
+    expect(TestModuleMultiple.dependencies).to eq [:hooli, :pied_piper]
+  end
+
   context 'with set dependencies' do
     before do
       TestModule.setup do |config|
         config.test = 'Bachmanity'
       end
-    end
-
-    it 'returns list of dependencies' do
-      expect(TestModule.dependencies).to eq [:test]
     end
 
     it 'sets up depedencies' do
