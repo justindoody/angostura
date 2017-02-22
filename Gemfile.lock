@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    angostura (0.1)
+    angostura (0.3)
       activesupport (~> 4.0)
 
 GEM

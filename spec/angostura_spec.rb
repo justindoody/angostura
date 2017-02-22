@@ -15,7 +15,7 @@ class Bachmanity; end
 describe TestModule do
   context 'without dependency set' do
     it 'raises an error for missing dependencies' do
-      expect { TestModule.setup {} }.to raise_error(DependencyError)
+      expect { TestModule.setup {} }.to raise_error(Angostura::DependencyError)
     end
   end
 

@@ -9,7 +9,7 @@ module Angostura
         yield self
 
         dependencies.each do |dependency|
-          raise DependencyError.new(dependency) if self.send(dependency).nil?
+          raise Angostura::DependencyError.new(dependency) if self.send(dependency).nil?
         end
       end
 
