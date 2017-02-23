@@ -25,6 +25,14 @@ describe TestModule do
     end
   end
 
+  it 'raises an error for non String dependencies setup' do
+    expect {
+      TestModule.setup do |c|
+        c.test = Integer
+      end
+    }.to raise_error(Angostura::DependencyTypeError)
+  end
+
   it 'returns list of dependencies' do
     expect(TestModule.dependencies).to eq [:test]
   end

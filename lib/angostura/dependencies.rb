@@ -17,9 +17,14 @@ module Angostura
 
       def dependency(*args, **kargs)
         self.dependencies = args + kargs&.keys
-        singleton_class.send(:attr_accessor, *dependencies)
+        singleton_class.send(:attr_reader, *dependencies)
 
         dependencies.each do |dependency|
+          define_singleton_method "#{dependency}=" do |value|
+            raise Angostura::DependencyTypeError.new(value) if !value.is_a? String
+            self.class_eval("@#{dependency} = value")
+          end
+
           define_singleton_method "#{dependency}_class" do
             Object.const_get(self.send(dependency))
           end

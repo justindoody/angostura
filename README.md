@@ -2,7 +2,9 @@
 
 ![Angostura Leaf](http://i.imgur.com/gHIhrzU.png)
 
-Angostura adds an easy way to setup component dependencies.
+Angostura adds an easy way to setup component dependencies inspired by [rails engine setup guides](http://guides.rubyonrails.org/engines.html#configuring-an-engine).
+
+Angostura expands upon the basic idea of using a `mattr_accessor` adding validation to ensure using stringified class names during setup, ensure that dependencies were set, and provide default values.
 
 ## Great, how do I use it?
 
@@ -16,7 +18,7 @@ module GreatComponent
 end
 ```
 
-With this `GreatComponent` now responds to `GreatComponent.user` and `GreatComponent.user_class`.
+With this `GreatComponent` now responds to `GreatComponent.user` returning the setup string and `GreatComponent.user_class` returning the class object.
 
 `GreatComponent` also now has an available setup method to be used in an initializer.
 
