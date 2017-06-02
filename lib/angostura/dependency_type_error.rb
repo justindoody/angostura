@@ -1,7 +1,7 @@
 module Angostura
   class DependencyTypeError < StandardError
     def initialize(dependency)
-      super("Component requires setting a dependency as a stringified class name, you set #{dependency}.")
+      super("Tried to setup a nonexistent dependency type #{dependency}.")
     end
   end
 end

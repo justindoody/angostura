@@ -1,19 +1,26 @@
 module TestModule
   include Angostura::Dependencies
 
-  dependency :test
+  dependency :test, type: :class
 end
 
 module TestModuleMultiple
   include Angostura::Dependencies
 
-  dependency :hooli, :pied_piper
+  dependency :hooli, type: :class
+  dependency :pied_piper, type: :class
 end
 
 module TestModuleDefaults
   include Angostura::Dependencies
 
-  dependency test: 'Bachmanity'
+  dependency :test, type: :class, default: 'Bachmanity'
+end
+
+module TestModuleEnv
+  include Angostura::Dependencies
+
+  dependency :jiang_yang, type: :env
 end
 
 class Bachmanity; end
@@ -30,15 +37,15 @@ describe TestModule do
       TestModule.setup do |c|
         c.test = Integer
       end
-    }.to raise_error(Angostura::DependencyTypeError)
+    }.to raise_error(Angostura::DependencyValueTypeError)
   end
 
   it 'returns list of dependencies' do
-    expect(TestModule.dependencies).to eq [:test]
+    expect(TestModule.dependencies.map(&:name)).to eq [:test]
   end
 
   it 'returns list of dependencies' do
-    expect(TestModuleMultiple.dependencies).to eq [:hooli, :pied_piper]
+    expect(TestModuleMultiple.dependencies.map(&:name)).to eq [:hooli, :pied_piper]
   end
 
   context 'with set dependencies' do
@@ -52,7 +59,7 @@ describe TestModule do
       expect(TestModule.test).to eq 'Bachmanity'
     end
 
-    it 'returns constantized depedency class' do
+    it 'returns constantized dependency class' do
       expect(TestModule.test_class).to eq Bachmanity
     end
   end
@@ -65,5 +72,17 @@ describe TestModule do
     it 'properly sets defaults' do
       expect(TestModule.test).to eq 'Bachmanity'
     end
+  end
+end
+
+describe TestModuleEnv do
+  before do
+    TestModuleEnv.setup do |config|
+      config.env.jiang_yang = 'Ole Man'
+    end
+  end
+
+  it 'does' do
+    expect(TestModuleEnv.env.jiang_yang).to eq 'Ole Man'
   end
 end
