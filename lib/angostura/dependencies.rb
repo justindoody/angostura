@@ -5,34 +5,35 @@ module Angostura
     end
 
     module ClassMethods
-      attr_accessor :dependencies
+      attr_writer :dependencies
+
+      def dependencies
+        @_dependencies ||= []
+      end
+
+      def env
+        @_env ||= OpenStruct.new
+      end
 
       def setup
         yield self
 
         dependencies.each do |dependency|
-          raise Angostura::DependencyError.new(dependency) if send(dependency).nil?
+          # raise Angostura::DependencyError.new(dependency.name) if send(dependency.name).nil?
+          raise Angostura::DependencyError.new(dependency.name) if dependency.missing?(component: self)
         end
       end
 
-      def dependency(*args, **kargs)
-        self.dependencies = args + kargs&.keys
-        singleton_class.send(:attr_reader, *dependencies)
+      def dependency(dependency_name, type: :default, default: nil)
+        type = type.to_sym
 
-        dependencies.each do |dependency|
-          define_singleton_method "#{dependency}=" do |value|
-            raise Angostura::DependencyTypeError.new(value) if !value.is_a? String
-            self.class_eval("@#{dependency} = value")
-          end
+        raise Angostura::DependencyTypeError.new(type) if !SUPPORTED_TYPES.keys.include?(type)
 
-          define_singleton_method "#{dependency}_class" do
-            Object.const_get(self.send(dependency))
-          end
-        end
+        dependency = SUPPORTED_TYPES[type].new(name: dependency_name, default: default)
 
-        kargs.each do |key, default_value|
-          send("#{key}=", default_value)
-        end
+        self.dependencies << dependency
+
+        dependency.generate(component: self)
       end
     end
   end
